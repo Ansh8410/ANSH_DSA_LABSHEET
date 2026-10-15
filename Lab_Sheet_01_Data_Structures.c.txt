@@ -1,0 +1,266 @@
+/*
+ ============================================================================
+ Name        : Lab_Sheet_01_Data_Structures.c
+ Author      : B. Tech. (AI&ML) – 3rd Sem. - Session: 2026-27
+ Course      : Data Structures Lab
+ Description : One-dimensional array operations (sum, reverse, maximum, sorting, etc.)
+ ============================================================================
+ */
+
+#include <stdio.h>
+
+// Function declarations for tasks
+void task1_sum_even_odd();
+void task2_sum_unequal_arrays();
+void task3_reverse_array();
+void task4_kth_smallest_largest();
+void task5_union_intersection();
+void task6_find_duplicates();
+void task7_is_subset();
+void task8_first_repeating();
+
+int main() {
+    int choice;
+    do {
+        printf("\n--- Data Structures Lab Sheet 01 ---\n");
+        printf("1. Sum of Even and Odd elements\n");
+        printf("2. Sum of two unequal sized arrays into third array\n");
+        printf("3. Reverse of an array\n");
+        printf("4. Find kth smallest and kth largest element\n");
+        printf("5. Union and Intersection of two arrays\n");
+        printf("6. Find duplicate elements in an array\n");
+        printf("7. Determine if one array is subset of another\n");
+        printf("8. Find the first repeating element in an array\n");
+        printf("9. Exit\n");
+        printf("Enter your choice (1-9): ");
+        if (scanf("%d", &choice) != 1) break;
+
+        switch(choice) {
+            case 1: task1_sum_even_odd(); break;
+            case 2: task2_sum_unequal_arrays(); break;
+            case 3: task3_reverse_array(); break;
+            case 4: task4_kth_smallest_largest(); break;
+            case 5: task5_union_intersection(); break;
+            case 6: task6_find_duplicates(); break;
+            case 7: task7_is_subset(); break;
+            case 8: task8_first_repeating(); break;
+            case 9: printf("Exiting...\n"); break;
+            default: printf("Invalid choice! Please enter between 1 and 9.\n");
+        }
+    } while(choice != 9);
+
+    return 0;
+}
+
+// Task 1: WAP to print sum of odd and sum of even elements in an array
+void task1_sum_even_odd() {
+    printf("\n--- Task 1: Sum of Even and Odd Elements ---\n");
+    int Arr[] = {1, 2, 3, 4, 5};
+    int n = sizeof(Arr) / sizeof(Arr[0]);
+    int sumEven = 0, sumOdd = 0;
+
+    for(int i = 0; i < n; i++) {
+        if(Arr[i] % 2 == 0) {
+            sumEven += Arr[i];
+        } else {
+            sumOdd += Arr[i];
+        }
+    }
+
+    printf("Sample Input: Arr[] = {1, 2, 3, 4, 5}\n");
+    printf("SumEven = %d, SumOdd = %d\n", sumEven, sumOdd);
+}
+
+// Task 2: WAP to print the sum of two unequal sizes array into third array
+void task2_sum_unequal_arrays() {
+    printf("\n--- Task 2: Sum of Two Unequal Sizes Arrays ---'\n");
+    int A[] = {1, 2, 3, 4, 5};
+    int B[] = {2, 4, 6, 8, 10, 12, 14};
+    int n1 = sizeof(A) / sizeof(A[0]);
+    int n2 = sizeof(B) / sizeof(B[0]);
+    int max_size = (n1 > n2) ? n1 : n2;
+    int Sum[7]; // max_size based on sample
+
+    for(int i = 0; i < max_size; i++) {
+        int valA = (i < n1) ? A[i] : 0;
+        int valB = (i < n2) ? B[i] : 0;
+        Sum[i] = valA + valB;
+    }
+
+    printf("Sample Input: A[] = {1,2,3,4,5}, B[] = {2,4,6,8,10,12,14}\n");
+    printf("Sum[] = {");
+    for(int i = 0; i < max_size; i++) {
+        printf("%d", Sum[i]);
+        if(i < max_size - 1) printf(",");
+    }
+    printf("}\n");
+}
+
+// Task 3: WAP to print the reverse of an array
+void task3_reverse_array() {
+    printf("\n--- Task 3: Reverse of an Array ---\n");
+    int Arr[] = {1, 2, 3, 4, 5};
+    int n = sizeof(Arr) / sizeof(Arr[0]);
+
+    printf("Sample Input: Arr[] = {1, 2, 3, 4, 5}\n");
+    printf("Sample Output: ");
+    for(int i = n - 1; i >= 0; i--) {
+        printf("%d ", Arr[i]);
+    }
+    printf("\n");
+}
+
+// Task 4: WAP to print kth smallest and kth largest element of an array
+void task4_kth_smallest_largest() {
+    printf("\n--- Task 4: Kth Smallest and Kth Largest Element ---\n");
+    int Arr[] = {1, 2, 3, 4, 5};
+    int n = sizeof(Arr) / sizeof(Arr[0]);
+    int k = 2;
+
+    // Simple Bubble Sort for demonstration
+    for(int i = 0; i < n - 1; i++) {
+        for(int j = 0; j < n - i - 1; j++) {
+            if(Arr[j] > Arr[j + 1]) {
+                int temp = Arr[j];
+                Arr[j] = Arr[j + 1];
+                Arr[j + 1] = temp;
+            }
+        }
+    }
+
+    printf("Sample Input: Arr[] = {1, 2, 3, 4, 5}, k = 2\n");
+    printf("%nd Smallest = %d, %nd Largest = %d\n", k, Arr[k - 1], k, Arr[n - k]);
+}
+
+// Task 5: WAP to print the union and intersection of two arrays
+void task5_union_intersection() {
+    printf("\n--- Task 5: Union and Intersection of Two Arrays ---\n");
+    int A[] = {1, 2, 3, 4, 5};
+    int B[] = {2, 4, 6, 8, 10};
+    int n1 = sizeof(A) / sizeof(A[0]);
+    int n2 = sizeof(B) / sizeof(B[0]);
+
+    printf("Sample Input: A[] = {1,2,3,4,5}, B[] = {2,4,6,8,10}\n");
+    
+    // Intersection
+    printf("Intersection = ");
+    int first_intersection = 1;
+    for(int i = 0; i < n1; i++) {
+        for(int j = 0; j < n2; j++) {
+            if(A[i] == B[j]) {
+                if(!first_intersection) printf(",");
+                printf("%d", A[i]);
+                first_intersection = 0;
+                break;
+            }
+        }
+    }
+    printf("\n");
+
+    // Union
+    printf("Union = ");
+    int union_arr[10];
+    int k = 0;
+    for(int i = 0; i < n1; i++) {
+        union_arr[k++] = A[i];
+    }
+    for(int j = 0; j < n2; j++) {
+        int found = 0;
+        for(int i = 0; i < n1; i++) {
+            if(B[j] == A[i]) {
+                found = 1;
+                break;
+            }
+        }
+        if(!found) {
+            union_arr[k++] = B[j];
+        }
+    }
+
+    for(int i = 0; i < k; i++) {
+        printf("%d", union_arr[i]);
+        if(i < k - 1) printf(",");
+    }
+    printf("\n");
+}
+
+// Task 6: WAP to find duplicate elements in an array
+void task6_find_duplicates() {
+    printf("\n--- Task 6: Find Duplicate Elements ---\n");
+    int Arr[] = {1, 4, 3, 4, 5, 1};
+    int n = sizeof(Arr) / sizeof(Arr[0]);
+
+    printf("Sample Input: Arr[] = {1, 4, 3, 4, 5, 1}\n");
+    printf("Sample Output: ");
+    for(int i = 0; i < n; i++) {
+        for(int j = i + 1; j < n; j++) {
+            if(Arr[i] == Arr[j]) {
+                // Print only once if it's the first occurrence of duplicate
+                int printed_before = 0;
+                for(int k = 0; k < i; k++) {
+                    if(Arr[k] == Arr[i]) printed_before = 1;
+                }
+                if(!printed_before) {
+                    printf("%d ", Arr[i]);
+                }
+            }
+        }
+    }
+    printf("\n");
+}
+
+// Task 7: WAP to determine whether one array is subset of another array
+void task7_is_subset() {
+    printf("\n--- Task 7: Determine if Array is Subset ---\n");
+    int Arr1[] = {11, 1, 13, 21, 3, 7};
+    int Arr2[] = {11, 3, 7, 1};
+    int n1 = sizeof(Arr1) / sizeof(Arr1[0]);
+    int n2 = sizeof(Arr2) / sizeof(Arr2[0]);
+
+    int is_subset = 1;
+    for(int i = 0; i < n2; i++) {
+        int found = 0;
+        for(int j = 0; j < n1; j++) {
+            if(Arr2[i] == Arr1[j]) {
+                found = 1;
+                break;
+            }
+        }
+        if(!found) {
+            is_subset = 0;
+            break;
+        }
+    }
+
+    printf("Sample Input: Arr1[] = {11,1,13,21,3,7}, Arr2[] = {11,3,7,1}\n");
+    if(is_subset) {
+        printf("Sample Output: Yes\n");
+    } else {
+        printf("Sample Output: No\n");
+    }
+}
+
+// Task 8: WAP to find the first repeating element in an array
+void task8_first_repeating() {
+    printf("\n--- Task 8: First Repeating Element ---\n");
+    int Arr[] = {10, 5, 3, 4, 3, 5, 6};
+    int n = sizeof(Arr) / sizeof(Arr[0]);
+    int first_repeating = -1;
+
+    for(int i = 0; i < n; i++) {
+        for(int j = i + 1; j < n; j++) {
+            if(Arr[i] == Arr[j]) {
+                first_repeating = Arr[i];
+                break;
+            }
+        }
+        if(first_repeating != -1) break;
+    }
+
+    printf("Sample Input: Arr[] = {10, 5, 3, 4, 3, 5, 6}\n");
+    if(first_repeating != -1) {
+        printf("Sample Output: %d\n", first_repeating);
+    } else {
+        printf("Sample Output: No repeating element found\n");
+    }
+}

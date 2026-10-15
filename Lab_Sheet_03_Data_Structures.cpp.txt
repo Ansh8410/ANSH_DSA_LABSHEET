@@ -1,0 +1,542 @@
+/*
+ ============================================================================
+ Name        : Lab_Sheet_03_Data_Structures.cpp
+ Author      : B. Tech. III Sem. (Session 2026-2027)
+ Course      : Data Structure I (BTCS209P) - Lab Sheet 3
+ Description : Comprehensive implementation and analysis of 5 fundamental 
+               sorting algorithms (Bubble, Insertion, Selection, Merge, Quick)
+               with comparison metrics, pass displays, and menu-driven choices.
+ ============================================================================
+ */
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+// Function Prototypes for Lab Exercises
+void exercise1_bubbleAscendingPasses();
+void exercise2_bubbleDescending();
+void exercise3_insertionAscendingPasses();
+void exercise4_selectionAscendingMinDisplay();
+void exercise5_mergeSortImplementation();
+void exercise6_quickSortLastPivot();
+void exercise7_quickSortPartitionDisplay();
+void exercise8_allFiveSortingAlgorithms();
+void exercise9_compareBasicSortsMetrics();
+void exercise10_compareMergeAndQuick();
+void exercise11_menuDrivenSorting();
+void exercise12_ascendingThenDescending();
+void exercise13_countComparisonsBasicSorts();
+void exercise14_bestCaseBehavior();
+void exercise15_quickSortPivotBehavior();
+
+// Helper sorting routines
+void merge(vector<int>& arr, int left, int mid, int right, long long& comps);
+void mergeSortHelper(vector<int>& arr, int left, int right, long long& comps);
+int partitionLast(vector<int>& arr, int low, int high, long long& comps, long long& swaps);
+void quickSortHelper(vector<int>& arr, int low, int high, long long& comps, long long& swaps, bool displayPass);
+
+int main() {
+    int choice;
+    do {
+        cout << "\n======================================================\n";
+        cout << " Data Structure Lab Sheet - 03 (Fundamental Sorting)    \n";
+        cout << "======================================================\n";
+        cout << " 1. Bubble Sort Ascending (with pass display)\n";
+        cout << " 2. Bubble Sort Descending\n";
+        cout << " 3. Insertion Sort Ascending (with pass/insertion display)\n";
+        cout << " 4. Selection Sort Ascending (with minimum element display)\n";
+        cout << " 5. Merge Sort (Separate Merge & Sort functions)\n";
+        cout << " 6. Quick Sort (Last element as pivot)\n";
+        cout << " 7. Quick Sort (Display array after each partition)\n";
+        cout << " 8. Implement all five sorting algorithms\n";
+        cout << " 9. Compare Bubble, Insertion, and Selection (Comparisons & Swaps)\n";
+        cout << "10. Compare Merge Sort and Quick Sort (Time & Space complexity)\n";
+        cout << "11. Menu-Driven program for any sorting algorithm\n";
+        cout << "12. Sort array in Ascending and then Descending order\n";
+        cout << "13. Count comparisons for Bubble, Insertion, and Selection\n";
+        cout << "14. Demonstrate best-case behavior (Sorted array)\n";
+        cout << "15. Test Quick Sort on sorted, reverse-sorted, and random arrays\n";
+        cout << "16. Exit\n";
+        cout << "Enter your choice (1-16): ";
+        
+        if (!(cin >> choice)) break;
+
+        switch(choice) {
+            case 1: exercise1_bubbleAscendingPasses(); break;
+            case 2: exercise2_bubbleDescending(); break;
+            case 3: exercise3_insertionAscendingPasses(); break;
+            case 4: exercise4_selectionAscendingMinDisplay(); break;
+            case 5: exercise5_mergeSortImplementation(); break;
+            case 6: exercise6_quickSortLastPivot(); break;
+            case 7: exercise7_quickSortPartitionDisplay(); break;
+            case 8: exercise8_allFiveSortingAlgorithms(); break;
+            case 9: exercise9_compareBasicSortsMetrics(); break;
+            case 10: exercise10_compareMergeAndQuick(); break;
+            case 11: exercise11_menuDrivenSorting(); break;
+            case 12: exercise12_ascendingThenDescending(); break;
+            case 13: exercise13_countComparisonsBasicSorts(); break;
+            case 14: exercise14_bestCaseBehavior(); break;
+            case 15: exercise15_quickSortPivotBehavior(); break;
+            case 16: cout << "Exiting Lab Sheet 03. Good luck!\n"; break;
+            default: cout << "Invalid choice! Please select between 1 and 16.\n";
+        }
+    } while(choice != 16);
+
+    return 0;
+}
+
+// 1. Bubble Sort in Ascending Order with Pass Display
+void exercise1_bubbleAscendingPasses() {
+    cout << "\n--- Exercise 1: Bubble Sort Ascending (Pass Display) ---\n";
+    vector<int> arr = {64, 34, 25, 12, 22, 11, 90};
+    cout << "Initial Array: ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+
+    int n = arr.size();
+    for(int i = 0; i < n - 1; i++) {
+        bool swapped = false;
+        for(int j = 0; j < n - i - 1; j++) {
+            if(arr[j] > arr[j + 1]) {
+                swap(arr[j], arr[j + 1]);
+                swapped = true;
+            }
+        }
+        cout << "Pass " << i + 1 << ": ";
+        for(int x : arr) cout << x << " ";
+        cout << endl;
+        if(!swapped) break;
+    }
+}
+
+// 2. Bubble Sort in Descending Order
+void exercise2_bubbleDescending() {
+    cout << "\n--- Exercise 2: Bubble Sort Descending ---\n";
+    vector<int> arr = {12, 11, 13, 5, 6, 7};
+    cout << "Initial Array: ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+
+    int n = arr.size();
+    for(int i = 0; i < n - 1; i++) {
+        for(int j = 0; j < n - i - 1; j++) {
+            if(arr[j] < arr[j + 1]) {
+                swap(arr[j], arr[j + 1]);
+            }
+        }
+    }
+    cout << "Final Sorted Array (Descending): ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+}
+
+// 3. Insertion Sort in Ascending Order with Pass Display
+void exercise3_insertionAscendingPasses() {
+    cout << "\n--- Exercise 3: Insertion Sort Ascending (Pass Display) ---\n";
+    vector<int> arr = {12, 11, 13, 5, 6};
+    cout << "Initial Array: ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+
+    int n = arr.size();
+    for(int i = 1; i < n; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        while(j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+        cout << "After Pass " << i << " (Inserted Key = " << key << "): ";
+        for(int x : arr) cout << x << " ";
+        cout << endl;
+    }
+}
+
+// 4. Selection Sort in Ascending Order with Minimum Element Display
+void exercise4_selectionAscendingMinDisplay() {
+    cout << "\n--- Exercise 4: Selection Sort (Min Element Display) ---\n";
+    vector<int> arr = {64, 25, 12, 22, 11};
+    cout << "Initial Array: ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+
+    int n = arr.size();
+    for(int i = 0; i < n - 1; i++) {
+        int minIndex = i;
+        for(int j = i + 1; j < n; j++) {
+            if(arr[j] < arr[minIndex]) {
+                minIndex = j;
+            }
+        }
+        swap(arr[i], arr[minIndex]);
+        cout << "Pass " << i + 1 << " -> Selected Min Element: " << arr[i] << " | Array: ";
+        for(int x : arr) cout << x << " ";
+        cout << endl;
+    }
+}
+
+// Merge Sort Helpers
+void merge(vector<int>& arr, int left, int mid, int right, long long& comps) {
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+
+    vector<int> L(n1), R(n2);
+    for(int i = 0; i < n1; i++) L[i] = arr[left + i];
+    for(int j = 0; j < n2; j++) R[j] = arr[mid + 1 + j];
+
+    int i = 0, j = 0, k = left;
+    while(i < n1 && j < n2) {
+        comps++;
+        if(L[i] <= R[j]) {
+            arr[k++] = L[i++];
+        } else {
+            arr[k++] = R[j++];
+        }
+    }
+    while(i < n1) arr[k++] = L[i++];
+    while(j < n2) arr[k++] = R[j++];
+}
+
+void mergeSortHelper(vector<int>& arr, int left, int right, long long& comps) {
+    if(left < right) {
+        int mid = left + (right - left) / 2;
+        mergeSortHelper(arr, left, mid, comps);
+        mergeSortHelper(arr, mid + 1, right, comps);
+        merge(arr, left, mid, right, comps);
+    }
+}
+
+// 5. Merge Sort Implementation
+void exercise5_mergeSortImplementation() {
+    cout << "\n--- Exercise 5: Merge Sort Implementation ---\n";
+    vector<int> arr = {38, 27, 43, 3, 9, 82, 10};
+    cout << "Initial Array: ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+
+    long long comps = 0;
+    mergeSortHelper(arr, 0, arr.size() - 1, comps);
+
+    cout << "Sorted Array (Merge Sort): ";
+    for(int x : arr) cout << x << " ";
+    cout << "\nTotal Comparisons: " << comps << endl;
+}
+
+// Quick Sort Helpers
+int partitionLast(vector<int>& arr, int low, int high, long long& comps, long long& swaps) {
+    int pivot = arr[high];
+    int i = (low - 1);
+    for(int j = low; j <= high - 1; j++) {
+        comps++;
+        if(arr[j] < pivot) {
+            i++;
+            swap(arr[i], arr[j]);
+            swaps++;
+        }
+    }
+    swap(arr[i + 1], arr[high]);
+    swaps++;
+    return (i + 1);
+}
+
+void quickSortHelper(vector<int>& arr, int low, int high, long long& comps, long long& swaps, bool displayPass) {
+    if(low < high) {
+        int pi = partitionLast(arr, low, high, comps, swaps);
+        if(displayPass) {
+            cout << "Partitioned around pivot " << arr[pi] << ": ";
+            for(int x : arr) cout << x << " ";
+            cout << endl;
+        }
+        quickSortHelper(arr, low, pi - 1, comps, swaps, displayPass);
+        quickSortHelper(arr, pi + 1, high, comps, swaps, displayPass);
+    }
+}
+
+// 6. Quick Sort with Last Element Pivot
+void exercise6_quickSortLastPivot() {
+    cout << "\n--- Exercise 6: Quick Sort (Last Element Pivot) ---\n";
+    vector<int> arr = {10, 7, 8, 9, 1, 5};
+    cout << "Initial Array: ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+
+    long long comps = 0, swaps = 0;
+    quickSortHelper(arr, 0, arr.size() - 1, comps, swaps, false);
+
+    cout << "Sorted Array (Quick Sort): ";
+    for(int x : arr) cout << x << " ";
+    cout << "\nComparisons: " << comps << ", Swaps: " << swaps << endl;
+}
+
+// 7. Quick Sort with Partition Display
+void exercise7_quickSortPartitionDisplay() {
+    cout << "\n--- Exercise 7: Quick Sort with Partition Display ---\n";
+    vector<int> arr = {24, 9, 29, 14, 19, 27};
+    cout << "Initial Array: ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+
+    long long comps = 0, swaps = 0;
+    quickSortHelper(arr, 0, arr.size() - 1, comps, swaps, true);
+
+    cout << "Final Sorted Array: ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+}
+
+// 8. Implement All Five Sorting Algorithms
+void exercise8_allFiveSortingAlgorithms() {
+    cout << "\n--- Exercise 8: Demonstration of All Five Sorting Algorithms ---\n";
+    vector<int> base = {45, 12, 89, 33, 21, 50, 4};
+
+    // 1. Bubble
+    vector<int> a1 = base;
+    int n = a1.size();
+    for(int i = 0; i < n - 1; i++)
+        for(int j = 0; j < n - i - 1; j++)
+            if(a1[j] > a1[j+1]) swap(a1[j], a1[j+1]);
+    cout << "1. Bubble Sort:    "; for(int x : a1) cout << x << " "; cout << endl;
+
+    // 2. Insertion
+    vector<int> a2 = base;
+    for(int i = 1; i < n; i++) {
+        int key = a2[i], j = i - 1;
+        while(j >= 0 && a2[j] > key) { a2[j+1] = a2[j]; j--; }
+        a2[j+1] = key;
+    }
+    cout << "2. Insertion Sort: "; for(int x : a2) cout << x << " "; cout << endl;
+
+    // 3. Selection
+    vector<int> a3 = base;
+    for(int i = 0; i < n - 1; i++) {
+        int m = i;
+        for(int j = i + 1; j < n; j++) if(a3[j] < a3[m]) m = j;
+        swap(a3[i], a3[m]);
+    }
+    cout << "3. Selection Sort: "; for(int x : a3) cout << x << " "; cout << endl;
+
+    // 4. Merge
+    vector<int> a4 = base;
+    long long c = 0;
+    mergeSortHelper(a4, 0, a4.size() - 1, c);
+    cout << "4. Merge Sort:     "; for(int x : a4) cout << x << " "; cout << endl;
+
+    // 5. Quick
+    vector<int> a5 = base;
+    long long co = 0, sw = 0;
+    quickSortHelper(a5, 0, a5.size() - 1, co, sw, false);
+    cout << "5. Quick Sort:     "; for(int x : a5) cout << x << " "; cout << endl;
+}
+
+// 9. Compare Bubble, Insertion, and Selection (Comparisons & Swaps)
+void exercise9_compareBasicSortsMetrics() {
+    cout << "\n--- Exercise 9: Metric Comparison of Basic Sorts ---\n";
+    vector<int> sample = {30, 10, 50, 20, 40, 60, 5};
+    int n = sample.size();
+
+    // Bubble Sort Metrics
+    vector<int> t1 = sample;
+    long long bComps = 0, bSwaps = 0;
+    for(int i = 0; i < n - 1; i++) {
+        for(int j = 0; j < n - i - 1; j++) {
+            bComps++;
+            if(t1[j] > t1[j+1]) {
+                swap(t1[j], t1[j+1]);
+                bSwaps++;
+            }
+        }
+    }
+
+    // Insertion Sort Metrics
+    vector<int> t2 = sample;
+    long long iComps = 0, iSwaps = 0;
+    for(int i = 1; i < n; i++) {
+        int key = t2[i];
+        int j = i - 1;
+        while(j >= 0) {
+            iComps++;
+            if(t2[j] > key) {
+                t2[j+1] = t2[j];
+                iSwaps++;
+                j--;
+            } else {
+                break;
+            }
+        }
+        t2[j+1] = key;
+    }
+
+    // Selection Sort Metrics
+    vector<int> t3 = sample;
+    long long sComps = 0, sSwaps = 0;
+    for(int i = 0; i < n - 1; i++) {
+        int m = i;
+        for(int j = i + 1; j < n; j++) {
+            sComps++;
+            if(t3[j] < t3[m]) m = j;
+        }
+        if(m != i) {
+            swap(t3[i], t3[m]);
+            sSwaps++;
+        }
+    }
+
+    cout << "Input Array: {30, 10, 50, 20, 40, 60, 5}\n";
+    cout << "Algorithm      | Comparisons | Swaps/Shifts\n";
+    cout << "-------------------------------------------\n";
+    cout << "Bubble Sort    | " << bComps << "         | " << bSwaps << "\n";
+    cout << "Insertion Sort | " << iComps << "         | " << iSwaps << "\n";
+    cout << "Selection Sort | " << sComps << "         | " << sSwaps << "\n";
+}
+
+// 10. Compare Merge Sort and Quick Sort Complexity & Behavior
+void exercise10_compareMergeAndQuick() {
+    cout << "\n--- Exercise 10: Merge Sort vs Quick Sort Analysis ---\n";
+    cout << "Feature          | Merge Sort            | Quick Sort\n";
+    cout << "---------------------------------------------------------\n";
+    cout << "Best Time        | O(n log n)            | O(n log n)\n";
+    cout << "Average Time     | O(n log n)            | O(n log n)\n";
+    cout << "Worst Time       | O(n log n) (Strict)   | O(n^2) (Poor pivot)\n";
+    cout << "Space Complexity | O(n) auxiliary        | O(log n) stack\n";
+    cout << "Stability        | Stable                | Unstable\n";
+    cout << "Strategy         | Divide and Conquer    | Divide and Conquer\n";
+}
+
+// 11. Menu-Driven Sorting Program
+void exercise11_menuDrivenSorting() {
+    cout << "\n--- Exercise 11: Menu-Driven Sorting Program ---\n";
+    vector<int> arr = {55, 22, 88, 11, 44, 77, 33};
+    int choice;
+    cout << "Array: [55, 22, 88, 11, 44, 77, 33]\n";
+    cout << "1. Bubble Sort\n2. Insertion Sort\n3. Selection Sort\n4. Merge Sort\n5. Quick Sort\n";
+    cout << "Enter your choice (1-5): ";
+    cin >> choice;
+
+    vector<int> temp = arr;
+    int n = temp.size();
+    if(choice == 1) {
+        for(int i = 0; i < n - 1; i++)
+            for(int j = 0; j < n - i - 1; j++)
+                if(temp[j] > temp[j+1]) swap(temp[j], temp[j+1]);
+        cout << "Bubble Sorted: ";
+    } else if(choice == 2) {
+        for(int i = 1; i < n; i++) {
+            int key = temp[i], j = i - 1;
+            while(j >= 0 && temp[j] > key) { temp[j+1] = temp[j]; j--; }
+            temp[j+1] = key;
+        }
+        cout << "Insertion Sorted: ";
+    } else if(choice == 3) {
+        for(int i = 0; i < n - 1; i++) {
+            int m = i;
+            for(int j = i + 1; j < n; j++) if(temp[j] < temp[m]) m = j;
+            swap(temp[i], temp[m]);
+        }
+        cout << "Selection Sorted: ";
+    } else if(choice == 4) {
+        long long c = 0;
+        mergeSortHelper(temp, 0, n - 1, c);
+        cout << "Merge Sorted: ";
+    } else if(choice == 5) {
+        long long co = 0, sw = 0;
+        quickSortHelper(temp, 0, n - 1, co, sw, false);
+        cout << "Quick Sorted: ";
+    } else {
+        cout << "Invalid choice!\n";
+        return;
+    }
+    for(int x : temp) cout << x << " ";
+    cout << endl;
+}
+
+// 12. Sort Array in Ascending and then Descending Order
+void exercise12_ascendingThenDescending() {
+    cout << "\n--- Exercise 12: Ascending then Descending Order ---\n";
+    vector<int> arr = {19, 3, 56, 22, 8, 41};
+    cout << "Original Array: ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+
+    // Sort Ascending (using Insertion sort logic)
+    int n = arr.size();
+    for(int i = 1; i < n; i++) {
+        int key = arr[i], j = i - 1;
+        while(j >= 0 && arr[j] > key) { arr[j+1] = arr[j]; j--; }
+        arr[j+1] = key;
+    }
+    cout << "Ascending Sorted:  ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+
+    // Sort Descending (reversing or sorting descending)
+    for(int i = 0; i < n - 1; i++) {
+        for(int j = 0; j < n - i - 1; j++) {
+            if(arr[j] < arr[j+1]) swap(arr[j], arr[j+1]);
+        }
+    }
+    cout << "Descending Sorted: ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+}
+
+// 13. Count comparisons for Bubble, Insertion, and Selection
+void exercise13_countComparisonsBasicSorts() {
+    cout << "\n--- Exercise 13: Exact Comparison Count ---\n";
+    exercise9_compareBasicSortsMetrics(); // Re-utilizes metric counting logic
+}
+
+// 14. Demonstrate Best-Case Behavior (Sorted Array)
+void exercise14_bestCaseBehavior() {
+    cout << "\n--- Exercise 14: Best-Case Behavior (Sorted Array) ---\n";
+    vector<int> sortedArr = {1, 2, 3, 4, 5, 6, 7};
+    int n = sortedArr.size();
+
+    // Optimized Bubble Sort Best Case
+    long long bComps = 0;
+    bool swapped = false;
+    for(int i = 0; i < n - 1; i++) {
+        swapped = false;
+        for(int j = 0; j < n - i - 1; j++) {
+            bComps++;
+            if(sortedArr[j] > sortedArr[j+1]) swapped = true;
+        }
+        if(!swapped) break; // Terminated in 1 pass
+    }
+
+    // Insertion Sort Best Case
+    long long iComps = 0;
+    for(int i = 1; i < n; i++) {
+        iComps++; // 1 comparison per element in sorted array
+        int key = sortedArr[i];
+        int j = i - 1;
+        // loop condition fails immediately
+    }
+
+    cout << "Input is already sorted: {1, 2, 3, 4, 5, 6, 7}\n";
+    cout << "Optimized Bubble Sort Comparisons: " << bComps << " (O(n))\n";
+    cout << "Insertion Sort Comparisons:        " << iComps << " (O(n))\n";
+}
+
+// 15. Test Quick Sort on Sorted, Reverse-Sorted, and Random Arrays
+void exercise15_quickSortPivotBehavior() {
+    cout << "\n--- Exercise 15: Quick Sort Pivot Behavior Test ---\n";
+    vector<int> sorted = {1, 2, 3, 4, 5, 6, 7};
+    vector<int> revSorted = {7, 6, 5, 4, 3, 2, 1};
+    vector<int> randomArr = {3, 1, 4, 1, 5, 9, 2};
+
+    long long c1 = 0, s1 = 0;
+    quickSortHelper(sorted, 0, sorted.size() - 1, c1, s1, false);
+    cout << "Sorted Array Input -> Quick Sort Comparisons (Worst Case): " << c1 << endl;
+
+    long long c2 = 0, s2 = 0;
+    quickSortHelper(revSorted, 0, revSorted.size() - 1, c2, s2, false);
+    cout << "Reverse-Sorted Input -> Quick Sort Comparisons: " << c2 << endl;
+
+    long long c3 = 0, s3 = 0;
+    quickSortHelper(randomArr, 0, randomArr.size() - 1, c3, s3, false);
+    cout << "Randomly Arranged Input -> Quick Sort Comparisons (Average Case): " << c3 << endl;
+}

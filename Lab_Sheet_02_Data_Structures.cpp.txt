@@ -1,0 +1,568 @@
+/*
+ ============================================================================
+ Name        : Lab_Sheet_02_Data_Structures.cpp
+ Author      : B. Tech. III Sem. (Session 2026-2027)
+ Course      : Data Structure I (BTCS209P)
+ Description : Comprehensive C++ implementation of Searching & Sorting algorithms 
+               along with menu-driven choices and analysis questions.
+ ============================================================================
+ */
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+// Function declarations
+void linearSearch();
+void binarySearch();
+void compareSearch();
+void bubbleSortAscending();
+void bubbleSortDescending();
+void insertionSortAscending();
+void selectionSortAscending();
+void mergeSort();
+void quickSortLastPivot();
+void quickSortWithPartitionDisplay();
+void menuDrivenSearch();
+void menuDrivenSort();
+void mergeSortAndBinarySearch();
+void compareSortingComparisons();
+void sortingComplexitiesDisplay();
+
+// Helper functions for sorting
+void merge(vector<int>& arr, int left, int mid, int right, long long& comparisons);
+void mergeSortHelper(vector<int>& arr, int left, int right, long long& comparisons);
+int partitionLast(vector<int>& arr, int low, int high, int& swaps, int& comps, bool displayPass);
+void quickSortHelper(vector<int>& arr, int low, int high, bool displayPass);
+
+int main() {
+    int choice;
+    do {
+        cout << "\n=========================================\n";
+        cout << " Data Structure Lab Sheet - 02 (C++)
+";
+        cout << "=========================================\n";
+        cout << " 1. Linear Search
+";
+        cout << " 2. Binary Search
+";
+        cout << " 3. Compare Linear and Binary Search
+";
+        cout << " 4. Bubble Sort (Ascending with Pass Display)
+";
+        cout << " 5. Bubble Sort (Descending)
+";
+        cout << " 6. Insertion Sort (Ascending with Pass Display)
+";
+        cout << " 7. Selection Sort (Ascending with Min Element Display)
+";
+        cout << " 8. Merge Sort Implementation
+";
+        cout << " 9. Quick Sort (Last Element Pivot)
+";
+        cout << "10. Quick Sort (Display after each partition)
+";
+        cout << "11. Menu-Driven Search Program
+";
+        cout << "12. Menu-Driven Sorting Program (Bubble/Insertion/Selection)
+";
+        cout << "13. Merge Sort followed by Binary Search
+";
+        cout << "14. Compare Sorting Comparisons (e.g. Bubble vs Insertion)
+";
+        cout << "15. Display Sorting Time Complexities
+";
+        cout << "16. Exit
+";
+        cout << "Enter your choice (1-16): ";
+        
+        if (!(cin >> choice)) break;
+
+        switch(choice) {
+            case 1: linearSearch(); break;
+            case 2: binarySearch(); break;
+            case 3: compareSearch(); break;
+            case 4: bubbleSortAscending(); break;
+            case 5: bubbleSortDescending(); break;
+            case 6: insertionSortAscending(); break;
+            case 7: selectionSortAscending(); break;
+            case 8: mergeSort(); break;
+            case 9: quickSortLastPivot(); break;
+            case 10: quickSortWithPartitionDisplay(); break;
+            case 11: menuDrivenSearch(); break;
+            case 12: menuDrivenSort(); break;
+            case 13: mergeSortAndBinarySearch(); break;
+            case 14: compareSortingComparisons(); break;
+            case 15: sortingComplexitiesDisplay(); break;
+            case 16: cout << "Exiting program. Good luck with your lab!
+"; break;
+            default: cout << "Invalid choice! Please choose between 1 and 16.
+";
+        }
+    } while(choice != 16);
+
+    return 0;
+}
+
+// 1. Linear Search
+void linearSearch() {
+    cout << "\n--- 1. Linear Search ---\n";
+    vector<int> arr = {10, 25, 7, 18, 30};
+    int key;
+    cout << "Array: [10, 25, 7, 18, 30]
+";
+    cout << "Enter element to search: ";
+    cin >> key;
+
+    int pos = -1;
+    for(size_t i = 0; i < arr.size(); i++) {
+        if(arr[i] == key) {
+            pos = i;
+            break;
+        }
+    }
+
+    if(pos != -1)
+        cout << "Element " << key << " found at position: " << pos + 1 << " (Index: " << pos << ")\n";
+    else
+        cout << "Element " << key << " not found in the array.\n";
+}
+
+// 2. Binary Search
+void binarySearch() {
+    cout << "\n--- 2. Binary Search ---\n";
+    vector<int> arr = {5, 10, 15, 20, 25, 30, 35};
+    int key;
+    cout << "Sorted Array: [5, 10, 15, 20, 25, 30, 35]
+";
+    cout << "Enter element to search: ";
+    cin >> key;
+
+    int low = 0, high = arr.size() - 1, pos = -1;
+    while(low <= high) {
+        int mid = low + (high - low) / 2;
+        cout << "Comparing with mid element: " << arr[mid] << endl;
+        if(arr[mid] == key) {
+            pos = mid;
+            break;
+        } else if(arr[mid] < key) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+
+    if(pos != -1)
+        cout << "Element found at position: " << pos + 1 << endl;
+    else
+        cout << "Element not found.
+";
+}
+
+// 3. Compare Linear and Binary Search
+void compareSearch() {
+    cout << "\n--- 3. Compare Linear and Binary Search ---\n";
+    vector<int> arr = {3, 9, 14, 22, 35, 48, 50}; // Must be sorted for binary search comparison
+    int key = 35;
+    cout << "Sorted Array: [3, 9, 14, 22, 35, 48, 50], Key = " << key << endl;
+    
+    // Linear Search steps count
+    int linearSteps = 0;
+    for(size_t i = 0; i < arr.size(); i++) {
+        linearSteps++;
+        if(arr[i] == key) break;
+    }
+
+    // Binary Search steps count
+    int binarySteps = 0;
+    int low = 0, high = arr.size() - 1;
+    while(low <= high) {
+        binarySteps++;
+        int mid = low + (high - low) / 2;
+        if(arr[mid] == key) break;
+        else if(arr[mid] < key) low = mid + 1;
+        else high = mid - 1;
+    }
+
+    cout << "Linear Search steps taken: " << linearSteps << " (Time: O(n))
+";
+    cout << "Binary Search steps taken: " << binarySteps << " (Time: O(log n))
+";
+}
+
+// 4. Bubble Sort in Ascending Order with Pass Display
+void bubbleSortAscending() {
+    cout << "\n--- 4. Bubble Sort (Ascending) ---\n";
+    vector<int> arr = {64, 34, 25, 12, 22, 11, 90};
+    cout << "Initial Array: ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+
+    int n = arr.size();
+    for(int i = 0; i < n - 1; i++) {
+        bool swapped = false;
+        for(int j = 0; j < n - i - 1; j++) {
+            if(arr[j] > arr[j + 1]) {
+                swap(arr[j], arr[j + 1]);
+                swapped = true;
+            }
+        }
+        cout << "Pass " << i + 1 << ": ";
+        for(int x : arr) cout << x << " ";
+        cout << endl;
+        if(!swapped) break; // optimized
+    }
+}
+
+// 5. Bubble Sort in Descending Order
+void bubbleSortDescending() {
+    cout << "\n--- 5. Bubble Sort (Descending) ---\n";
+    vector<int> arr = {12, 11, 13, 5, 6, 7};
+    cout << "Initial Array: ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+
+    int n = arr.size();
+    for(int i = 0; i < n - 1; i++) {
+        for(int j = 0; j < n - i - 1; j++) {
+            if(arr[j] < arr[j + 1]) {
+                swap(arr[j], arr[j + 1]);
+            }
+        }
+    }
+    cout << "Sorted in Descending Order: ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+}
+
+// 6. Insertion Sort in Ascending Order
+void insertionSortAscending() {
+    cout << "\n--- 6. Insertion Sort (Ascending) ---\n";
+    vector<int> arr = {12, 11, 13, 5, 6};
+    cout << "Initial Array: ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+
+    int n = arr.size();
+    for(int i = 1; i < n; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        while(j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+        cout << "After Pass " << i << " (Inserted " << key << "): ";
+        for(int x : arr) cout << x << " ";
+        cout << endl;
+    }
+}
+
+// 7. Selection Sort in Ascending Order
+void selectionSortAscending() {
+    cout << "\n--- 7. Selection Sort (Ascending) ---\n";
+    vector<int> arr = {64, 25, 12, 22, 11};
+    cout << "Initial Array: ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+
+    int n = arr.size();
+    for(int i = 0; i < n - 1; i++) {
+        int min_idx = i;
+        for(int j = i + 1; j < n; j++) {
+            if(arr[j] < arr[min_idx]) {
+                min_idx = j;
+            }
+        }
+        swap(arr[i], arr[min_idx]);
+        cout << "Pass " << i + 1 << " (Selected Min: " << arr[i] << "): ";
+        for(int x : arr) cout << x << " ";
+        cout << endl;
+    }
+}
+
+// Merge Sort Helpers
+void merge(vector<int>& arr, int left, int mid, int right, long long& comparisons) {
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+
+    vector<int> L(n1), R(n2);
+    for(int i = 0; i < n1; i++) L[i] = arr[left + i];
+    for(int j = 0; j < n2; j++) R[j] = arr[mid + 1 + j];
+
+    int i = 0, j = 0, k = left;
+    while(i < n1 && j < n2) {
+        comparisons++;
+        if(L[i] <= R[j]) {
+            arr[k++] = L[i++];
+        } else {
+            arr[k++] = R[j++];
+        }
+    }
+    while(i < n1) arr[k++] = L[i++];
+    while(j < n2) arr[k++] = R[j++];
+}
+
+void mergeSortHelper(vector<int>& arr, int left, int right, long long& comparisons) {
+    if(left < right) {
+        int mid = left + (right - left) / 2;
+        mergeSortHelper(arr, left, mid, comparisons);
+        mergeSortHelper(arr, mid + 1, right, comparisons);
+        merge(arr, left, mid, right, comparisons);
+    }
+}
+
+// 8. Merge Sort Implementation
+void mergeSort() {
+    cout << "\n--- 8. Merge Sort ---\n";
+    vector<int> arr = {38, 27, 43, 3, 9, 82, 10};
+    cout << "Initial Array: ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+
+    long long comparisons = 0;
+    mergeSortHelper(arr, 0, arr.size() - 1, comparisons);
+
+    cout << "Sorted Array: ";
+    for(int x : arr) cout << x << " ";
+    cout << "\nTotal Comparisons: " << comparisons << endl;
+}
+
+// Quick Sort Helpers
+int partitionLast(vector<int>& arr, int low, int high, int& swaps, int& comps, bool displayPass) {
+    int pivot = arr[high];
+    int i = (low - 1);
+    for(int j = low; j <= high - 1; j++) {
+        comps++;
+        if(arr[j] < pivot) {
+            i++;
+            swap(arr[i], arr[j]);
+            swaps++;
+        }
+    }
+    swap(arr[i + 1], arr[high]);
+    swaps++;
+    return (i + 1);
+}
+
+void quickSortHelperDisplay(vector<int>& arr, int low, int high) {
+    if(low < high) {
+        int swaps = 0, comps = 0;
+        int pi = partitionLast(arr, low, high, swaps, comps, true);
+        cout << "Partitioned around pivot " << arr[pi] << ": ";
+        for(int x : arr) cout << x << " ";
+        cout << endl;
+        quickSortHelperDisplay(arr, low, pi - 1);
+        quickSortHelperDisplay(arr, pi + 1, high);
+    }
+}
+
+// 9. Quick Sort with Last Element Pivot
+void quickSortLastPivot() {
+    cout << "\n--- 9. Quick Sort (Last Element Pivot) ---\n";
+    vector<int> arr = {10, 7, 8, 9, 1, 5};
+    cout << "Initial Array: ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+
+    int dummySwaps = 0, dummyComps = 0;
+    // Simple recursive lambda or helper without printing passes
+    auto qsort = [&](auto& self, int low, int high) -> void {
+        if (low < high) {
+            int pi = partitionLast(arr, low, high, dummySwaps, dummyComps, false);
+            self(self, low, pi - 1);
+            self(self, pi + 1, high);
+        }
+    };
+    qsort(qsort, 0, arr.size() - 1);
+
+    cout << "Sorted Array: ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+}
+
+// 10. Quick Sort and display array after each partition
+void quickSortWithPartitionDisplay() {
+    cout << "\n--- 10. Quick Sort with Partition Display ---\n";
+    vector<int> arr = {24, 9, 29, 14, 19, 27};
+    cout << "Initial Array: ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+
+    quickSortHelperDisplay(arr, 0, arr.size() - 1);
+    cout << "Final Sorted Array: ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+}
+
+// 11. Menu-Driven Search Program
+void menuDrivenSearch() {
+    cout << "\n--- 11. Menu-Driven Search Program ---\n";
+    vector<int> arr = {11, 22, 33, 44, 55, 66, 77};
+    int choice, key;
+    cout << "Array: [11, 22, 33, 44, 55, 66, 77]
+";
+    cout << "1. Linear Search\n2. Binary Search\nEnter choice: ";
+    cin >> choice;
+    cout << "Enter search key: ";
+    cin >> key;
+
+    if(choice == 1) {
+        bool found = false;
+        for(size_t i = 0; i < arr.size(); i++) {
+            if(arr[i] == key) {
+                cout << "Found at index " << i << endl;
+                found = true;
+                break;
+            }
+        }
+        if(!found) cout << "Not found.
+";
+    } else if(choice == 2) {
+        int low = 0, high = arr.size() - 1, foundIdx = -1;
+        while(low <= high) {
+            int mid = low + (high - low) / 2;
+            if(arr[mid] == key) { foundIdx = mid; break; }
+            else if(arr[mid] < key) low = mid + 1;
+            else high = mid - 1;
+        }
+        if(foundIdx != -1) cout << "Found at index " << foundIdx << endl;
+        else cout << "Not found.
+";
+    } else {
+        cout << "Invalid search choice.
+";
+    }
+}
+
+// 12. Menu-Driven Sorting Program
+void menuDrivenSort() {
+    cout << "\n--- 12. Menu-Driven Sorting Program ---\n";
+    vector<int> arr = {45, 12, 89, 33, 21, 50};
+    int choice;
+    cout << "Original Array: [45, 12, 89, 33, 21, 50]
+";
+    cout << "1. Bubble Sort
+2. Insertion Sort
+3. Selection Sort
+Enter choice: ";
+    cin >> choice;
+
+    vector<int> temp = arr;
+    int n = temp.size();
+    if(choice == 1) {
+        for(int i = 0; i < n - 1; i++)
+            for(int j = 0; j < n - i - 1; j++)
+                if(temp[j] > temp[j+1]) swap(temp[j], temp[j+1]);
+        cout << "Bubble Sorted: ";
+    } else if(choice == 2) {
+        for(int i = 1; i < n; i++) {
+            int key = temp[i], j = i - 1;
+            while(j >= 0 && temp[j] > key) { temp[j+1] = temp[j]; j--; }
+            temp[j+1] = key;
+        }
+        cout << "Insertion Sorted: ";
+    } else if(choice == 3) {
+        for(int i = 0; i < n - 1; i++) {
+            int min_idx = i;
+            for(int j = i + 1; j < n; j++) if(temp[j] < temp[min_idx]) min_idx = j;
+            swap(temp[i], temp[min_idx]);
+        }
+        cout << "Selection Sorted: ";
+    } else {
+        cout << "Invalid choice.
+";
+        return;
+    }
+    for(int x : temp) cout << x << " ";
+    cout << endl;
+}
+
+// 13. Merge Sort followed by Binary Search
+void mergeSortAndBinarySearch() {
+    cout << "\n--- 13. Merge Sort & Binary Search Integration ---\n";
+    vector<int> arr = {42, 15, 8, 55, 23, 4, 19};
+    cout << "Original Unsorted Array: ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+
+    long long dummyComps = 0;
+    mergeSortHelper(arr, 0, arr.size() - 1, dummyComps);
+    cout << "Sorted Array using Merge Sort: ";
+    for(int x : arr) cout << x << " ";
+    cout << endl;
+
+    int key;
+    cout << "Enter element to binary search: ";
+    cin >> key;
+
+    int low = 0, high = arr.size() - 1, pos = -1;
+    while(low <= high) {
+        int mid = low + (high - low) / 2;
+        if(arr[mid] == key) { pos = mid; break; }
+        else if(arr[mid] < key) low = mid + 1;
+        else high = mid - 1;
+    }
+
+    if(pos != -1) cout << "Element found at index " << pos << endl;
+    else cout << "Element not found.
+";
+}
+
+// 14. Compare Sorting Comparisons
+void compareSortingComparisons() {
+    cout << "\n--- 14. Compare Sorting Comparisons ---\n";
+    vector<int> original = {30, 10, 50, 20, 40, 60, 5};
+    
+    // Bubble Sort comparisons count
+    vector<int> a1 = original;
+    long long bubbleComps = 0;
+    int n = a1.size();
+    for(int i = 0; i < n - 1; i++) {
+        for(int j = 0; j < n - i - 1; j++) {
+            bubbleComps++;
+            if(a1[j] > a1[j+1]) swap(a1[j], a1[j+1]);
+        }
+    }
+
+    // Insertion Sort comparisons count
+    vector<int> a2 = original;
+    long long insertionComps = 0;
+    for(int i = 1; i < n; i++) {
+        int key = a2[i];
+        int j = i - 1;
+        while(j >= 0) {
+            insertionComps++;
+            if(a2[j] > key) {
+                a2[j+1] = a2[j];
+                j--;
+            } else {
+                break;
+            }
+        }
+        a2[j+1] = key;
+    }
+
+    cout << "Input Array: {30, 10, 50, 20, 40, 60, 5}
+";
+    cout << "Bubble Sort Total Comparisons: " << bubbleComps << endl;
+    cout << "Insertion Sort Total Comparisons: " << insertionComps << endl;
+}
+
+// 15. Display Sorting Time Complexities
+void sortingComplexitiesDisplay() {
+    cout << "\n============================================================\n";
+    cout << " 15. Time & Space Complexity Analysis of Sorting Algorithms
+";
+    cout << "============================================================\n";
+    cout << "Algorithm       | Best Case    | Average Case | Worst Case   | Space Complexity\n";
+    cout << "------------------------------------------------------------\n";
+    cout << "Bubble Sort     | O(n)         | O(n^2)       | O(n^2)       | O(1)\n";
+    cout << "Insertion Sort  | O(n)         | O(n^2)       | O(n^2)       | O(1)\n";
+    cout << "Selection Sort  | O(n^2)       | O(n^2)       | O(n^2)       | O(1)\n";
+    cout << "Merge Sort      | O(n log n)   | O(n log n)   | O(n log n)   | O(n)\n";
+    cout << "Quick Sort      | O(n log n)   | O(n log n)   | O(n^2)       | O(log n)\n";
+    cout << "============================================================\n";
+}

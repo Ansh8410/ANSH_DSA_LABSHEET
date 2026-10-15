@@ -1,0 +1,436 @@
+/*
+ ============================================================================
+ Name        : Lab_Sheet_04_Data_Structures.cpp
+ Author      : B. Tech. III Sem. (Session 2026-2027)
+ Course      : Data Structure I (BTCS209P) - Lab Sheet 4
+ Description : Comprehensive implementation of Singly Linked List, Doubly 
+               Linked List, Circular Linked List, and all lab exercises 
+               (insertion, deletion, search, count, min/max, reverse, sort).
+ ============================================================================
+ */
+
+#include <iostream>
+#include <climits>
+
+using namespace std;
+
+// ============================================================================
+// 1. Singly Linked List Class & Exercises (Exercises 1 to 13)
+// ============================================================================
+class SinglyLinkedList {
+private:
+    struct Node {
+        int data;
+        Node* next;
+        Node(int val) : data(val), next(nullptr) {}
+    };
+    Node* head;
+
+public:
+    SinglyLinkedList() : head(nullptr) {}
+
+    // Destructor to free memory
+    ~SinglyLinkedList() {
+        Node* current = head;
+        while (current != nullptr) {
+            Node* nextNode = current->next;
+            delete current;
+            current = nextNode;
+        }
+    }
+
+    // Insert at beginning (Exercise 2) [Time: O(1)]
+    void insertBeginning(int val) {
+        Node* newNode = new Node(val);
+        newNode->next = head;
+        head = newNode;
+    }
+
+    // Insert at end (Exercise 3) [Time: O(n)]
+    void insertEnd(int val) {
+        Node* newNode = new Node(val);
+        if (head == nullptr) {
+            head = newNode;
+            return;
+        }
+        Node* curr = head;
+        while (curr->next != nullptr) {
+            curr = curr->next;
+        }
+        curr->next = newNode;
+    }
+
+    // Insert at given position (Exercise 4) [Time: O(n)]
+    void insertAtPosition(int val, int pos) {
+        if (pos <= 1) {
+            insertBeginning(val);
+            return;
+        }
+        Node* newNode = new Node(val);
+        Node* curr = head;
+        int index = 1;
+        while (curr != nullptr && index < pos - 1) {
+            curr = curr->next;
+            index++;
+        }
+        if (curr == nullptr) {
+            cout << "Position out of range! Inserting at end instead.\n";
+            delete newNode;
+            insertEnd(val);
+        } else {
+            newNode->next = curr->next;
+            curr->next = newNode;
+        }
+    }
+
+    // Delete from beginning (Exercise 5) [Time: O(1)]
+    void deleteBeginning() {
+        if (head == nullptr) {
+            cout << "List is Empty! Cannot delete.\n";
+            return;
+        }
+        Node* temp = head;
+        head = head->next;
+        delete temp;
+        cout << "Deleted node from beginning.\n";
+    }
+
+    // Delete from end (Exercise 6) [Time: O(n)]
+    void deleteEnd() {
+        if (head == nullptr) {
+            cout << "List is Empty! Cannot delete.\n";
+            return;
+        }
+        if (head->next == nullptr) {
+            delete head;
+            head = nullptr;
+            cout << "Deleted last remaining node.\n";
+            return;
+        }
+        Node* curr = head;
+        while (curr->next->next != nullptr) {
+            curr = curr->next;
+        }
+        delete curr->next;
+        curr->next = nullptr;
+        cout << "Deleted node from end.\n";
+    }
+
+    // Delete from given position (Exercise 7) [Time: O(n)]
+    void deleteAtPosition(int pos) {
+        if (head == nullptr) {
+            cout << "List is Empty!\n";
+            return;
+        }
+        if (pos == 1) {
+            deleteBeginning();
+            return;
+        }
+        Node* curr = head;
+        int index = 1;
+        while (curr != nullptr && index < pos - 1) {
+            curr = curr->next;
+            index++;
+        }
+        if (curr == nullptr || curr->next == nullptr) {
+            cout << "Position out of range!\n";
+        } else {
+            Node* temp = curr->next;
+            curr->next = temp->next;
+            delete temp;
+            cout << "Deleted node at position " << pos << "\n";
+        }
+    }
+
+    // Search element (Exercise 8) [Time: O(n)]
+    void search(int key) {
+        Node* curr = head;
+        int pos = 1;
+        while (curr != nullptr) {
+            if (curr->data == key) {
+                cout << "Element " << key << " found at position " << pos << "\n";
+                return;
+            }
+            curr = curr->next;
+            pos++;
+        }
+        cout << "Element " << key << " not found in the list.\n";
+    }
+
+    // Count nodes (Exercise 9) [Time: O(n)]
+    int countNodes() {
+        int count = 0;
+        Node* curr = head;
+        while (curr != nullptr) {
+            count++;
+            curr = curr->next;
+        }
+        return count;
+    }
+
+    // Find Max and Min element (Exercise 10) [Time: O(n)]
+    void findMinMax() {
+        if (head == nullptr) {
+            cout << "List is Empty!\n";
+            return;
+        }
+        int maxVal = INT_MIN;
+        int minVal = INT_MAX;
+        Node* curr = head;
+        while (curr != nullptr) {
+            if (curr->data > maxVal) maxVal = curr->data;
+            if (curr->data < minVal) minVal = curr->data;
+            curr = curr->next;
+        }
+        cout << "Maximum element: " << maxVal << "\n";
+        cout << "Minimum element: " << minVal << "\n";
+    }
+
+    // Reverse Linked List (Exercise 11) [Time: O(n)]
+    void reverse() {
+        Node* prev = nullptr;
+        Node* curr = head;
+        Node* nextNode = nullptr;
+        while (curr != nullptr) {
+            nextNode = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = nextNode;
+        }
+        head = prev;
+        cout << "Linked List reversed successfully.\n";
+    }
+
+    // Sort Linked List in ascending order (Exercise 12) [Time: O(n^2)]
+    void sortList() {
+        if (head == nullptr || head->next == nullptr) return;
+        bool swapped;
+        Node* ptr1;
+        Node* lptr = nullptr;
+        do {
+            swapped = false;
+            ptr1 = head;
+            while (ptr1->next != lptr) {
+                if (ptr1->data > ptr1->next->data) {
+                    int temp = ptr1->data;
+                    ptr1->data = ptr1->next->data;
+                    ptr1->next->data = temp;
+                    swapped = true;
+                }
+                ptr1 = ptr1->next;
+            }
+            lptr = ptr1;
+        } while (swapped);
+        cout << "Linked List sorted in ascending order.\n";
+    }
+
+    // Display (Exercise 1) [Time: O(n)]
+    void display() {
+        if (head == nullptr) {
+            cout << "List is Empty!\n";
+            return;
+        }
+        Node* curr = head;
+        cout << "Linked List: ";
+        while (curr != nullptr) {
+            cout << curr->data << " -> ";
+            curr = curr->next;
+        }
+        cout << "NULL\n";
+    }
+};
+
+// ============================================================================
+// 2. Doubly Linked List Class (Exercise 14)
+// ============================================================================
+class DoublyLinkedList {
+private:
+    struct Node {
+        int data;
+        Node* next;
+        Node* prev;
+        Node(int val) : data(val), next(nullptr), prev(nullptr) {}
+    };
+    Node* head;
+
+public:
+    DoublyLinkedList() : head(nullptr) {}
+
+    void insertEnd(int val) {
+        Node* newNode = new Node(val);
+        if (head == nullptr) {
+            head = newNode;
+            return;
+        }
+        Node* curr = head;
+        while (curr->next != nullptr) {
+            curr = curr->next;
+        }
+        curr->next = newNode;
+        newNode->prev = curr;
+    }
+
+    void displayForward() {
+        if (head == nullptr) {
+            cout << "Doubly Linked List is Empty!\n";
+            return;
+        }
+        Node* curr = head;
+        cout << "Forward: ";
+        while (curr != nullptr) {
+            cout << curr->data << " <-> ";
+            curr = curr->next;
+        }
+        cout << "NULL\n";
+    }
+};
+
+// ============================================================================
+// 3. Circular Linked List Class (Exercise 15)
+// ============================================================================
+class CircularLinkedList {
+private:
+    struct Node {
+        int data;
+        Node* next;
+        Node(int val) : data(val), next(nullptr) {}
+    };
+    Node* head;
+
+public:
+    CircularLinkedList() : head(nullptr) {}
+
+    void insertEnd(int val) {
+        Node* newNode = new Node(val);
+        if (head == nullptr) {
+            head = newNode;
+            newNode->next = head;
+            return;
+        }
+        Node* curr = head;
+        while (curr->next != head) {
+            curr = curr->next;
+        }
+        curr->next = newNode;
+        newNode->next = head;
+    }
+
+    void display() {
+        if (head == nullptr) {
+            cout << "Circular Linked List is Empty!\n";
+            return;
+        }
+        Node* curr = head;
+        cout << "Circular List: ";
+        do {
+            cout << curr->data << " -> ";
+            curr = curr->next;
+        } while (curr != head);
+        cout << "(head)\n";
+    }
+};
+
+int main() {
+    SinglyLinkedList sList;
+    int choice, val, pos;
+
+    do {
+        cout << "\n=========================================\n";
+        cout << " Data Structure Lab Sheet - 04 (Linked List)\n";
+        cout << "=========================================\n";
+        cout << " 1. Create / Display Singly Linked List\n";
+        cout << " 2. Insert at Beginning\n";
+        cout << " 3. Insert at End\n";
+        cout << " 4. Insert at Given Position\n";
+        cout << " 5. Delete from Beginning\n";
+        cout << " 6. Delete from End\n";
+        cout << " 7. Delete from Given Position\n";
+        cout << " 8. Search Element\n";
+        cout << " 9. Count Total Nodes\n";
+        cout << "10. Find Max and Min Elements\n";
+        cout << "11. Reverse Linked List\n";
+        cout << "12. Sort Linked List (Ascending)\n";
+        cout << "13. Demonstrate Doubly Linked List (Exercise 14)\n";
+        cout << "14. Demonstrate Circular Linked List (Exercise 15)\n";
+        cout << "15. Exit\n";
+        cout << "Enter your choice (1-15): ";
+
+        if (!(cin >> choice)) break;
+
+        switch(choice) {
+            case 1:
+                sList.display();
+                break;
+            case 2:
+                cout << "Enter value to insert at beginning: ";
+                cin >> val;
+                sList.insertBeginning(val);
+                break;
+            case 3:
+                cout << "Enter value to insert at end: ";
+                cin >> val;
+                sList.insertEnd(val);
+                break;
+            case 4:
+                cout << "Enter value: ";
+                cin >> val;
+                cout << "Enter position: ";
+                cin >> pos;
+                sList.insertAtPosition(val, pos);
+                break;
+            case 5:
+                sList.deleteBeginning();
+                break;
+            case 6:
+                sList.deleteEnd();
+                break;
+            case 7:
+                cout << "Enter position to delete: ";
+                cin >> pos;
+                sList.deleteAtPosition(pos);
+                break;
+            case 8:
+                cout << "Enter value to search: ";
+                cin >> val;
+                sList.search(val);
+                break;
+            case 9:
+                cout << "Total nodes in Linked List: " << sList.countNodes() << endl;
+                break;
+            case 10:
+                sList.findMinMax();
+                break;
+            case 11:
+                sList.reverse();
+                break;
+            case 12:
+                sList.sortList();
+                break;
+            case 13: {
+                cout << "\n--- Doubly Linked List Demo ---\n";
+                DoublyLinkedList dList;
+                dList.insertEnd(10);
+                dList.insertEnd(20);
+                dList.insertEnd(30);
+                dList.displayForward();
+                break;
+            }
+            case 14: {
+                cout << "\n--- Circular Linked List Demo ---\n";
+                CircularLinkedList cList;
+                cList.insertEnd(100);
+                cList.insertEnd(200);
+                cList.insertEnd(300);
+                cList.display();
+                break;
+            }
+            case 15:
+                cout << "Exiting Lab Sheet 04. Good luck!\n";
+                break;
+            default:
+                cout << "Invalid choice! Please select between 1 and 15.\n";
+        }
+    } while(choice != 15);
+
+    return 0;
+}
